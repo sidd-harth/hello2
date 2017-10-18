@@ -1,40 +1,38 @@
 node {
     def app
+	
+	env.PATH = "${tool 'Maven3'}/bin:${env.PATH}"
+	
+	stage('Clone repository') {
+        /* Let's make sure we have the repository cloned to our workspace */
+
+        checkout scm
+    } 
+	
+	
+	stage('Package') {
+		dir('sidd-harth/hello2') {
+		  sh 'mvn clean package -DskipTests'
+		}
+	}
+
     
-    withMaven(maven:'maven')
-    
-    {
 
-        stage('Checkout') {
-            git url: 'https://github.com/sidd-harth/hello2.git', branch: 'master'
-        }
-        
-        stage('Build') {
-            sh 'mvn clean package'
+    stage('Build image') {
+        /* This builds the actual image; synonymous to
+         * docker build on the command line */
 
-            def pom = readMavenPom file:'pom.xml'
-            print pom.version
-            env.version = pom.version
-        }
-        
-        
-        stage('Build image') {
-        /* This builds the actual image; synonymous to         * docker build on the command line */
-
-        app = docker.build("sidd-harth/hello2/docker")
+        app = docker.build("/sidd-harth/hello2/docker")
     }
-        
-        
-            stage('Push image') {
-        /* Finally, we'll push the image with two tags: First, the incremental build number from Jenkins Second, the 'latest' tag.
+
+    stage('Push image') {
+        /* Finally, we'll push the image with two tags:
+         * First, the incremental build number from Jenkins
+         * Second, the 'latest' tag.
          * Pushing multiple tags is cheap, as all the layers are reused. */
         docker.withRegistry('https://registry.hub.docker.com', 'docker-hub-credentials') {
             app.push("${env.BUILD_NUMBER}")
-            app.push("jenkins")
+            app.push("latest")
         }
-        
-        
     }
-}
-    
 }
