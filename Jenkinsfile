@@ -1,28 +1,26 @@
 node {
     def app
-	
-	env.PATH = "${tool 'Maven3'}/bin:${env.PATH}"
-	
-	stage('Clone repository') {
+
+    stage('Clone repository') {
         /* Let's make sure we have the repository cloned to our workspace */
 
         checkout scm
-    } 
-	
-	
-	stage('Package') {
-		dir('sidd-harth/hello2') {
-		  sh 'mvn clean package -DskipTests'
-		}
-	}
-
-    
+    }
 
     stage('Build image') {
         /* This builds the actual image; synonymous to
          * docker build on the command line */
 
-        app = docker.build("/sidd-harth/hello2/docker")
+        app = docker.build("sidd-harth/hello2/docker")
+    }
+
+    stage('Test image') {
+        /* Ideally, we would run a test framework against our image.
+         * For this example, we're using a Volkswagen-type approach ;-) */
+
+        app.inside {
+            sh 'echo "Tests passed"'
+        }
     }
 
     stage('Push image') {
