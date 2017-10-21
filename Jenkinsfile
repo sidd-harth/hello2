@@ -11,10 +11,8 @@ node {
         /* This builds the actual image; synonymous to
          * docker build on the command line */
 
-       // app = docker.build("sidd-harth/hello2/docker")
-       dir('docker') {
-          docker.build("arungupta/docker-jenkins-pipeline:${env.BUILD_NUMBER}")
-         }
+        app = docker.build("sidd-harth/hello2/docker")
+
     }
 
   /*  stage('Test image') {
