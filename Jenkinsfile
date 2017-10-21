@@ -1,5 +1,5 @@
 node {
-    def app
+    //def app
 
     stage('Clone repository') {
         /* Let's make sure we have the repository cloned to our workspace */
@@ -11,7 +11,10 @@ node {
         /* This builds the actual image; synonymous to
          * docker build on the command line */
 
-        app = docker.build("sidd-harth/hello2/docker")
+       // app = docker.build("sidd-harth/hello2/docker")
+       dir('docker') {
+          docker.build("arungupta/docker-jenkins-pipeline:${env.BUILD_NUMBER}")
+         }
     }
 
   /*  stage('Test image') {
