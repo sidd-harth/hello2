@@ -11,7 +11,7 @@ public class ZzzHelloApplication {
 	
 	@RequestMapping("/hello")
 	public String hello() {
-		return "Hi Silent Shadow";
+		return "Hi Siddharth";
 	}
 
 	public static void main(String[] args) {
